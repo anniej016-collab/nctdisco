@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NCT Discography Tracker</title>
+<meta name="description" content="Browse, filter, and keep private notes on the full NCT / NCT 127 / NCT Dream / WayV / NCT Wish / NCT DoJaeJung / NCT JNJM / solo discography.">
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+<div class="wrap">
+  <div class="head">
+    <div class="eyebrow">SM ENTERTAINMENT · MULTI-UNIT MANIFEST</div>
+    <div class="flap-title" id="flapTitle"></div>
+  </div>
+
+  <div class="intro">
+    <p><b>NCT</b> (Neo Culture Technology) is an SM Entertainment boy group built around an open, expandable concept—rather than one fixed lineup, members are organized into city- and concept-based sub-units that can promote independently or together. The roster consists of over two dozen members across <b>NCT U</b> (the flexible main unit), <b>NCT 127</b> (Seoul-based unit), <b>NCT Dream</b> (originally a rotating teen unit, now fixed at 6), <b>WayV</b> (Chinese-market unit), and <b>NCT Wish</b> (Japanese-market unit that concluded the group's expansion phase). Smaller sub-units include the trio <b>NCT DoJaeJung</b> and the duo <b>NCT JNJM</b> (Jeno &amp; Jaemin). 4 members also performed as part of the SM supergroup <b>SuperM</b>, and members have begun to release solo work more frequently—ranging from soundtrack singles to full-length studio albums. <i>Note: 2026 has seen significant roster changes — Mark, Lucas, and Winwin departed NCT and SM Entertainment (April, April, and July respectively); Ten departed SM Entertainment in April but continues as an active NCT and WayV member. All their releases remain in this tracker.</i></p>
+    <div class="stat-row" id="statRow"></div>
+    <div class="meta-row" id="lastUpdatedLine">Loading…</div>
+  </div>
+
+  <div class="controls">
+    <div class="search-row">
+      <div class="search-box"><input type="text" id="searchInput" placeholder="search title, member, type, year… (filters live)"></div>
+      <select id="typeFilter"><option value="ALL">All types</option></select>
+      <select id="langFilter"><option value="ALL">All languages</option></select>
+      <button class="notes-toggle-btn" id="notesToggleBtn">📓 my notes only</button>
+      <button class="share-btn" id="shareBtn">🔗 copy link to this view</button>
+    </div>
+    <div class="member-filter-badge" id="memberBadge">
+      <span class="badge-label">showing releases with:</span>
+      <div id="memberBadgeTags"></div>
+      <button id="memberBadgeClear">clear all ✕</button>
+    </div>
+    <div class="member-picker-wrap">
+      <div class="member-picker-box">
+        <input type="text" id="memberPickerInput" placeholder="+ filter by member…" autocomplete="off" spellcheck="false">
+        <ul class="member-picker-dropdown" id="memberPickerDropdown"></ul>
+      </div>
+    </div>
+    <div class="gates" id="gateRow"></div>
+    <div class="legend">
+      <span>tap multiple unit buttons to compare them side by side</span>
+      <span><span class="approx">~</span> date is approximate (month/year only)</span>
+      <span>★ title track</span>
+      <span class="member-pill guest-pill" style="padding:2px 7px;">name<span class="guest-tag">guest</span></span>
+      <span>= non-NCT performer</span>
+      <span>✍ = wrote lyrics &nbsp;♪ = composed music</span>
+      <span>🔒 = your private notes live inside a release's expand panel</span>
+    </div>
+  </div>
+
+  <div class="manifest">
+    <table>
+      <thead>
+        <tr>
+          <th class="col-expand"></th>
+          <th class="col-cover"></th>
+          <th data-key="date">Date <span class="arrow">▾</span></th>
+          <th data-key="unit">Unit</th>
+          <th data-key="title">Release</th>
+          <th data-key="type">Type</th>
+          <th data-key="lang">Lang</th>
+          <th data-key="members">Featuring</th>
+          <th>Notes</th>
+        </tr>
+      </thead>
+      <tbody id="tbody"></tbody>
+    </table>
+  </div>
+
+  <div class="foot">
+    <div class="count" id="countLine"></div>
+    <div class="notes-io">
+      <span class="notes-io-btn" style="cursor:default; color:var(--muted); text-decoration:none;">your notes:</span>
+      <button class="notes-io-btn" id="exportNotesBtn">⭳ export as file</button>
+      <label class="notes-io-btn" style="cursor:pointer;">
+        ⭱ import from file
+        <input type="file" id="importNotesInput" accept="application/json" style="display:none;">
+      </label>
+      <span class="notes-io-status" id="notesIoStatus"></span>
+    </div>
+  </div>
+  <div style="padding:0 26px 22px;">
+    <details class="glossary-details">
+      <summary>Explore the site</summary>
+      <div class="note">
+        <b>Personal notes</b> — click the ▸ arrow on any release to open its expand panel; below the tracklist (if there is one) is a private notes box. Whatever you type there saves automatically to <i>this browser only</i> — nothing is sent anywhere, and nobody else visiting the site can see it. Because it's stored in your browser, clearing site data or switching devices will lose it, so use "export as file" in the footer to back your notes up (or move them to another browser) and "import from file" to bring them back. Releases you've noted get a small dot on their expand arrow; the "📓 my notes only" button filters the table down to just those. <br><br>
+        <b>Writing &amp; composing credits</b> — where a member wrote lyrics (✍) or composed/co-composed the music (♪), a small badge appears on their name in the Featuring column. Hovering shows which credit type it is. The Notes column names which specific tracks they worked on. Credits are sourced from KOMCA (Korea Music Copyright Association) registrations and are only shown where confirmed — absence of a badge doesn't mean a member had no creative input, just that it wasn't formally documented or verified. <br><br>
+        <b>Expand a release</b> — click the ▸ arrow on any row to reveal its full tracklist (title track marked ★) and your private notes box. <b>Filter by member</b> — click any name in the Featuring column, or type a name into the "+ filter by member…" box in the controls bar. Either way, selecting additional members narrows the results using AND logic — so selecting Taeyong then Mark shows only releases where both performed together. Each selected member appears as a removable tag; click ✕ on any tag to remove just that one, or "clear all" to reset. <b>Filter by unit</b> — use the row of buttons (NCT, NCT 127, NCT Dream, WayV, NCT Wish, etc.) below the search bar; tap more than one to view several units at once, tap a selected one again to remove it, or hit "All units" to clear the selection. <b>Filter by type or language</b> — use the two dropdowns next to the search box. <b>Search</b> — the search box matches title, member name, and year at once. <b>Sort</b> — click any column header (Date, Unit, Release, Type, Lang) to sort by it; click again to reverse the order. <b>Share a view</b> — once you've filtered, searched, or sorted to something worth sharing, hit "🔗 copy link to this view" to copy a URL that reopens the page in that exact state (this never includes your private notes). <br><br>
+        <b>A few terms:</b> <b>EP</b> — a short release, usually 4–7 tracks (called a "mini album" in Korean). <b>Single Album</b> — an even shorter release built around one or two main tracks. <b>Repackage</b> — a reissue of an album with a few new bonus tracks added, sold as a fresh "comeback." <b>OST</b> — a song made for a TV drama or film soundtrack, usually credited to one or two members rather than the full unit. <b>Album Track</b> — a song that's part of a larger various-artist compilation (like SM's yearly winter album) rather than its own standalone release. <b>Concert Film</b> — a DVD/Blu-ray release of a live show, distinct from an audio live album.
+      </div>
+    </details>
+    <details class="note-details">
+      <summary>About this data &amp; known gaps</summary>
+      <div class="note">
+        Dates, cover art, and tracklists are cross-checked across the NCT Wiki (Fandom), Wikipedia, and kprofiles.com, with conflicts between sources resolved in favor of the majority or the most directly-verifiable one (noted on the affected row where relevant). The <b>Featuring</b> column lists who actually performed on each release — non-NCT guests appear with a dashed border and a "guest" tag, and clicking any name (member or guest) filters to everything they've been part of. <b>SuperM</b> is included as its own unit. <b>Album Track</b> entries are individual songs pulled from larger various-artist compilations (e.g. the yearly SMTOWN winter albums) rather than standalone singles. <br><br>
+        <b>Known gaps:</b> tracklists are still missing for most individual singles and a handful of repackages; solo coverage spans every member with a confirmed release except Taeil, and several members (Johnny, Kun, Xiaojun, Hendery, Jungwoo, WinWin, Chenle, Jisung) have no individually-credited solo release found so far. <br><br>
+        <b>Staying current:</b> this is a hand-curated dataset (<code>js/data.js</code> in the repo), not a live feed from a streaming API. A scheduled check runs weekly and opens a GitHub issue on the repo if the newest tracked release is getting old, as a nudge to go verify and add anything new — it doesn't add releases on its own. Spot something missing or wrong? Open an issue or pull request on the project's GitHub repo with the correction.
+      </div>
+    </details>
+  </div>
+</div>
+
+<script src="js/data.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

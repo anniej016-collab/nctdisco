@@ -1,0 +1,70 @@
+name: Discography freshness check
+
+on:
+  schedule:
+    # Every Monday at 13:00 UTC.
+    - cron: '0 13 * * 1'
+  workflow_dispatch: {}
+
+permissions:
+  issues: write
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Check how old the newest tracked release is
+        id: freshness
+        run: node scripts/check-freshness.mjs
+
+      - name: Open or update a reminder issue
+        if: steps.freshness.outputs.stale == 'true'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const label = 'discography-freshness';
+            const title = 'Discography dataset may need a refresh';
+            const { latest_title, latest_date, days_since } = process.env;
+            const body = [
+              `The newest release tracked in \`js/data.js\` is **${latest_title}** (${latest_date}), ${days_since} day(s) ago.`,
+              '',
+              'This repo has no live feed — someone needs to check the usual sources (NCT Wiki, Wikipedia, kprofiles.com, official socials) for anything newer and add it to `js/data.js` by hand.',
+              '',
+              'This issue is opened/updated automatically by the weekly freshness-check workflow and is not proof that a new release actually exists — just that it has been a while.',
+            ].join('\n');
+
+            const { data: existing } = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'open',
+              labels: label,
+            });
+
+            if (existing.length > 0) {
+              const issue = existing[0];
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issue.number,
+                body: `Still stale as of this week's check.\n\n${body}`,
+              });
+            } else {
+              await github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title,
+                body,
+                labels: [label],
+              });
+            }
+        env:
+          latest_title: ${{ steps.freshness.outputs.latest_title }}
+          latest_date: ${{ steps.freshness.outputs.latest_date }}
+          days_since: ${{ steps.freshness.outputs.days_since }}
